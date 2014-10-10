@@ -1,6 +1,6 @@
 CC=cc -I. -L.
-AR=/Developer/usr/bin/ar
-RANLIB=/Developer/usr/bin/ranlib
+AR=/usr/bin/ar
+RANLIB=/usr/bin/ranlib
 
 BINDIR=/usr/local/bin
 MANDIR=/usr/local/man
