@@ -46,7 +46,7 @@ basename(char *path)
     char *p;
 
     if (( p = strrchr(path, '/') ))
-	return 1+p;
+    return 1+p;
     return path;
 }
 #endif
@@ -83,63 +83,62 @@ char **argv;
     pgm = basename(argv[0]);
 
     while ( argc > 2 ) {
-	if ( strcmp(argv[1], "-css") == 0 ) {
-	    EXPAND(css) = argv[2];
-	    argc -= 2;
-	    argv += 2;
-	}
-	else if ( strcmp(argv[1], "-header") == 0 ) {
-	    EXPAND(headers) = argv[2];
-	    argc -= 2;
-	    argv += 2;
-	}
-	else if ( strcmp(argv[1], "-footer") == 0 ) {
-	    EXPAND(footers) = argv[2];
-	    argc -= 2;
-	    argv += 2;
-	}
+    if ( strcmp(argv[1], "-css") == 0 ) {
+        EXPAND(css) = argv[2];
+        argc -= 2;
+        argv += 2;
+    }
+    else if ( strcmp(argv[1], "-header") == 0 ) {
+        EXPAND(headers) = argv[2];
+        argc -= 2;
+        argv += 2;
+    }
+    else if ( strcmp(argv[1], "-footer") == 0 ) {
+        EXPAND(footers) = argv[2];
+        argc -= 2;
+        argv += 2;
+    }
     }
 
 
     if ( argc > 1 ) {
-	char *p, *dot;
-	
-	source = malloc(strlen(argv[1]) + 6);
-	dest   = malloc(strlen(argv[1]) + 6);
+    char *p, *dot;
+    source = malloc(strlen(argv[1]) + 6);
+    dest   = malloc(strlen(argv[1]) + 6);
 
-	if ( !(source && dest) )
-	    fail("out of memory allocating name buffers");
+    if ( !(source && dest) )
+        fail("out of memory allocating name buffers");
 
-	strcpy(source, argv[1]);
-	if (( p = strrchr(source, '/') ))
-	    p = source;
-	else
-	    ++p;
+    strcpy(source, argv[1]);
+    if (( p = strrchr(source, '/') ))
+        p = source;
+    else
+        ++p;
 
-	if ( (input = fopen(source, "r")) == 0 ) {
-	    strcat(source, ".text");
-	    if ( (input = fopen(source, "r")) == 0 )
-		fail("can't open either %s or %s", argv[1], source);
-	}
-	strcpy(dest, source);
+    if ( (input = fopen(source, "r")) == 0 ) {
+        strcat(source, ".text");
+        if ( (input = fopen(source, "r")) == 0 )
+        fail("can't open either %s or %s", argv[1], source);
+    }
+    strcpy(dest, source);
 
-	if (( dot = strrchr(dest, '.') ))
-	    *dot = 0;
-	strcat(dest, ".html");
+    if (( dot = strrchr(dest, '.') ))
+        *dot = 0;
+    strcat(dest, ".html");
 
-	if ( (output = fopen(dest, "w")) == 0 )
-	    fail("can't write to %s", dest);
+    if ( (output = fopen(dest, "w")) == 0 )
+        fail("can't write to %s", dest);
     }
     else {
-	input = stdin;
-	output = stdout;
+    input = stdin;
+    output = stdout;
     }
 
     if ( (mmiot = mkd_in(input, 0)) == 0 )
-	fail("can't read %s", source ? source : "stdin");
+    fail("can't read %s", source ? source : "stdin");
 
     if ( !mkd_compile(mmiot, 0) )
-	fail("couldn't compile input");
+    fail("couldn't compile input");
 
 
     h = mkd_doc_title(mmiot);
@@ -147,39 +146,37 @@ char **argv;
     /* print a header */
 
     fprintf(output,
-	"<!doctype html public \"-//W3C//DTD HTML 4.0 Transitional //EN\">\n"
-	"<html>\n"
-	"<head>\n"
-	"  <meta name=\"GENERATOR\" content=\"mkd2html %s\">\n", markdown_version);
+    "<!doctype html public \"-//W3C//DTD HTML 4.0 Transitional //EN\">\n"
+    "<html>\n"
+    "<head>\n"
+    "  <meta name=\"GENERATOR\" content=\"mkd2html %s\">\n", markdown_version);
 
     fprintf(output,"  <meta http-equiv=\"Content-Type\"\n"
-		   "        content=\"text/html; charset-us-ascii\">");
+           "        content=\"text/html; charset-us-ascii\">");
 
     for ( i=0; i < S(css); i++ )
-	fprintf(output, "  <link rel=\"stylesheet\"\n"
-			"        type=\"text/css\"\n"
-			"        href=\"%s\" />\n", T(css)[i]);
+    fprintf(output, "  <link rel=\"stylesheet\"\n"
+            "        type=\"text/css\"\n"
+            "        href=\"%s\" />\n", T(css)[i]);
 
     if ( h ) {
-	fprintf(output,"  <title>");
-	mkd_generateline(h, strlen(h), output, 0);
-	fprintf(output, "</title>\n");
+    fprintf(output,"  <title>");
+    mkd_generateline(h, strlen(h), output, 0);
+    fprintf(output, "</title>\n");
     }
     for ( i=0; i < S(headers); i++ )
-	fprintf(output, "  %s\n", T(headers)[i]);
+    fprintf(output, "  %s\n", T(headers)[i]);
     fprintf(output, "</head>\n"
-		    "<body>\n");
+            "<body>\n");
 
     /* print the compiled body */
 
     mkd_generatehtml(mmiot, output);
 
     for ( i=0; i < S(footers); i++ )
-	fprintf(output, "%s\n", T(footers)[i]);
-    
+    fprintf(output, "%s\n", T(footers)[i]);
     fprintf(output, "</body>\n"
-		    "</html>\n");
-    
+            "</html>\n");
     mkd_cleanup(mmiot);
     exit(0);
 }
